@@ -1,4 +1,4 @@
-package filo
+package dequeue
 
 import (
 	"errors"
@@ -11,17 +11,17 @@ type node struct {
 	prev  *node
 }
 
-type Filo struct {
+type DEQueue struct {
 	head *node
 	last *node
 }
 
-func NewQueue() *Filo {
-	return &Filo{}
+func NewQueue() *DEQueue {
+	return &DEQueue{}
 }
 
 // Push add a value to the end of the queue
-func (f *Filo) Push(value string) {
+func (f *DEQueue) Push(value string) {
 	newNode := &node{
 		value: value,
 	}
@@ -37,8 +37,25 @@ func (f *Filo) Push(value string) {
 	f.last = newNode
 }
 
-// Pop returns the first value of the queue removing the value
-func (f *Filo) Pop() (string, error) {
+// PushHead add a value to the beginning of the queue
+func (f *DEQueue) PushHead(value string) {
+	newNode := &node{
+		value: value,
+	}
+
+	if f.head == nil {
+		f.head = newNode
+		f.last = newNode
+		return
+	}
+
+	newNode.next = f.head
+	f.head.prev = newNode
+	f.head = newNode
+}
+
+// Pop returns the first value of the queue removing it
+func (f *DEQueue) Pop() (string, error) {
 	if f.head == nil {
 		return "", errors.New("THE QUEUE IS EMPTY")
 	}
@@ -53,8 +70,24 @@ func (f *Filo) Pop() (string, error) {
 	return value, nil
 }
 
+// Pop returns the last value of the queue removing it
+func (f *DEQueue) PopLast() (string, error) {
+	if f.head == nil {
+		return "", errors.New("THE QUEUE IS EMPTY")
+	}
+
+	value := f.last.value
+
+	if f.head == f.last {
+		f.last = f.head.next
+	}
+
+	f.last = f.last.prev
+	return value, nil
+}
+
 // Print show all itens in the queue without removing any
-func (f *Filo) Print() {
+func (f *DEQueue) Print() {
 	currentNode := f.head
 	for currentNode != nil {
 		log.Println(currentNode.value)
@@ -63,7 +96,7 @@ func (f *Filo) Print() {
 }
 
 // GetLast returns the last inserted value of the without removing
-func (f *Filo) GetLast() (string, error) {
+func (f *DEQueue) GetLast() (string, error) {
 	if f.last == nil {
 		return "", errors.New("THE QUEUE IS EMPTY")
 	}
@@ -72,7 +105,7 @@ func (f *Filo) GetLast() (string, error) {
 }
 
 // GetHead retuns the first value in the queue without removing
-func (f *Filo) GetHead() (string, error) {
+func (f *DEQueue) GetHead() (string, error) {
 	if f.head == nil {
 		return "", errors.New("THE QUEUE IS EMPTY")
 	}
